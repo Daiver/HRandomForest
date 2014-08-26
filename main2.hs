@@ -15,14 +15,14 @@ main = do
     print tree
     print $ predict tree [0, 3, 4]
     
-    {-rawText <- readFile "./trainset"
+    rawText <- readFile "./trainset"
     let trainDataSet = reasSamplesClassIsLast $ rawText
     rawText <- readFile "./testset"
-    let testDataSet = reasSamplesClassIsLast $ rawText -}
-    rawText <- readFile "./wine_train"
+    let testDataSet = reasSamplesClassIsLast $ rawText 
+    {-rawText <- readFile "./wine_train"
     let trainDataSet = reasSamplesClassIsLead $ rawText
     rawText <- readFile "./wine_test"
-    let testDataSet = reasSamplesClassIsLead $ rawText
+    let testDataSet = reasSamplesClassIsLead $ rawText-}
 
     let tree = buildNode trainDataSet
     print tree
