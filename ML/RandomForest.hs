@@ -16,10 +16,10 @@ instance Classifier RandomForest where
 
 trainRandomForest gen samples = RandomForest trees
     where 
-        (seeds, _) = randomSeq gen 1
+        (seeds, _) = randomSeq gen 20
         ans = map (flip randomSamplingWithRepeats samples . mkStdGen) seeds
-        numOfFeats = length . head $ samples
-        trees = map (\x -> buildForestNode (take (numOfFeats/2) . fst $ shuffle [0..length (snd $ samples !! 0) - 1] (snd x)) (fst x)) ans
+        numberOfFeats = length . snd . head $ samples
+        trees = map (\x -> buildForestNode (take (numberOfFeats `div` 2) . fst $ shuffle [0..length (snd $ samples !! 0) - 1] (snd x)) (fst x)) ans
 
 buildForestNode featIdxs samples
     | bestGain > 0 = let (r, l) = divide samples featIdx thr in Node featIdx thr (buildNode l) (buildNode r)

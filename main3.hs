@@ -20,6 +20,6 @@ main = do
     --
     --let tree = buildNode trainDataSet
     let tree = trainRandomForest (mkStdGen 2) trainDataSet
-    print tree
+    --print tree
     --mapM_ (\sample -> print $ show (fst sample) ++ show (predictDecTree tree (snd sample))) testDataSet
     print $ (show $ testClassifier tree testDataSet) ++ "/" ++ (show $ length testDataSet)
