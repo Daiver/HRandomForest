@@ -18,8 +18,8 @@ main = do
     rawText2 <- readFile $ args !! 2
     let testDataSet = reader $ rawText2 
     --
-    --let tree = buildNode trainDataSet
-    let tree = trainRandomForest (mkStdGen 2) trainDataSet
+    let tree = buildNode trainDataSet
+    --let tree = trainRandomForest (mkStdGen 2) trainDataSet
     --print tree
     --mapM_ (\sample -> print $ show (fst sample) ++ show (predictDecTree tree (snd sample))) testDataSet
     print $ (show $ testClassifier tree testDataSet) ++ "/" ++ (show $ length testDataSet)
