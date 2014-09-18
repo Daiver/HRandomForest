@@ -1,25 +1,20 @@
 import Control.Monad
+import Control.Arrow
 import Data.Word
 import Data.Binary.Get
 import qualified Data.ByteString.Lazy as BStringLazy
+import System.Random
 
-listOfWord8 = do
-    empty <- isEmpty
-    if empty
-        then return []
-        else do 
-            v <- getWord8
-            rest <- listOfWord8 
-            return (v : rest)
+import ML.RandomForest
 
 readListOfWord8N n = do
-    return . replicate (fromIntegral n) $ getWord8 
+    replicate (fromIntegral n) $ getWord8 
 
+readLabels :: Get (Word32, [Word8])
 readLabels = do
     magic <- getWord32be
     count <- getWord32be
-    --list  <- listOfWord8 
-    list <- readListOfWord8N count
+    list  <- sequence $ readListOfWord8N count
     return (count, list)
 
 readImages = do
@@ -28,8 +23,11 @@ readImages = do
     
     rows <- getWord32be
     cols <- getWord32be
-    list <- replicateM (fromIntegral count) (readListOfWord8N (rows * cols))
+    list <- sequence $ replicate (fromIntegral count) (sequence $ readListOfWord8N (rows * cols))
     return (count, (rows, cols), list)
+
+makeSamples :: (Integral a) => [a] -> [[a]] -> [(Int, [Float])]
+makeSamples labels images = map ( fromIntegral *** (map fromIntegral)) $ zip labels images
 
 main = do
     let labelsFileName = "/home/daiver/Downloads/t10k-labels-idx1-ubyte"
@@ -39,4 +37,10 @@ main = do
     let imagesFileName = "/home/daiver/Downloads/t10k-images-idx3-ubyte"
     content <- BStringLazy.readFile imagesFileName
     let (s, (r, c), images) = runGet (readImages) content
-    print $ (s, r, c, length images) --}
+    print $ (s, r, c, length images, length . head $ images) --}
+
+    let samples = makeSamples labels images
+    print "Start train"
+    let tree = trainRandomForest (mkStdGen 2) samples
+    print tree
+    print "End"
