@@ -18,5 +18,6 @@ readLabels = do
     return (count, list)
 
 main = do
-    content <- BStringLazy.readFile "/home/daiver/Downloads/t10k-labels-idx1-ubyte"
+    let fileName = "/home/daiver/Downloads/t10k-labels-idx1-ubyte"
+    content <- BStringLazy.readFile fileName
     print $ runGet (readLabels) content
