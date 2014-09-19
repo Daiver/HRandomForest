@@ -1,8 +1,11 @@
 import Control.Monad
+import Control.Applicative
 import Control.Arrow
 import Data.Word
 import Data.Binary.Get
 import qualified Data.ByteString.Lazy as BStringLazy
+import qualified Data.List as List
+
 import System.Random
 
 import ML.RandomForest
@@ -29,6 +32,12 @@ readImages = do
 makeSamples :: (Integral a) => [a] -> [[a]] -> [(Int, [Float])]
 makeSamples labels images = map ( fromIntegral *** (map fromIntegral)) $ zip labels images
 
+tmpWork samples = map f [0 .. length (head dt) - 1] 
+    where
+        n = length samples
+        dt = map snd samples
+        f feat = List.sortBy (\a b -> compare (dt!!a!!feat) (dt!!b!!feat)) [0 .. n - 1]
+
 main = do
     let labelsFileName = "/home/daiver/Downloads/t10k-labels-idx1-ubyte"
     content <- BStringLazy.readFile labelsFileName
@@ -41,6 +50,7 @@ main = do
 
     let samples = makeSamples labels images
     print "Start train"
-    let tree = trainRandomForest (mkStdGen 2) samples
-    print tree
+    print $ length . head $ tmpWork samples
+    --let tree = trainRandomForest (mkStdGen 2) $ take 20 samples
+    --print tree
     print "End"
